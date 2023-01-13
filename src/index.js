@@ -13,7 +13,6 @@ app.use(express.json());
 async function sessionMiddleware(req, res, next) {
     const dataCache = new DataCache();
     let id = "4";
-    console.log(await dataCache.getUserFromCache(id));
     try {
         const userData = await dataCache.getUser(id);
         
