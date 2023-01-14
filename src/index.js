@@ -15,7 +15,6 @@ async function sessionMiddleware(req, res, next) {
     let id = "4";
     try {
         const userData = await dataCache.getUser(id);
-        
         req.session = userData[0];
         next();
     } catch (err) {
@@ -24,8 +23,8 @@ async function sessionMiddleware(req, res, next) {
 }
 
 // Use the middleware in a route
-app.use("/try", sessionMiddleware, function (req, res) {
-    res.send("Welcome, " + req.session.email);
+app.use("/", sessionMiddleware, function (req, res) {
+    res.send(req.session.email + " Logged in");
 });
 
 app.listen(5000, console.log('Server is running...'))
