@@ -23,7 +23,7 @@ async function sessionMiddleware(req, res, next) {
 }
 
 // Use the middleware in a route
-app.use("/", sessionMiddleware, function (req, res) {
+app.use("/login", sessionMiddleware, function (req, res) {
     res.send(req.session.email + " Logged in");
 });
 

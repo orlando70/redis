@@ -1,5 +1,5 @@
-import mysql from 'mysql2';
 import Redis from 'ioredis';
+import mysql from 'mysql2';
 
 export default class DataCache {
     constructor() {
@@ -9,7 +9,6 @@ export default class DataCache {
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE,
-            port: process.env.DB_PORT || 3306,
         });
     }
 
@@ -24,25 +23,13 @@ export default class DataCache {
         });
     }
 
-    async getUserFromCache(id) {
-        const data = await this.redis.get(`data:${id}`);
-        if (data) {
-            return JSON.parse(data);
-        }
-        return null;
-    }
-
-    async storeUserInCache(id, data) {
-        this.redis.set(`data:${id}`, JSON.stringify(data));
-    }
-
     async getUser(id) {
         // session found in cache, send back to caller;
-        let data = await this.getUserFromCache(id);
+        let data = JSON.parse(await this.redis.get(`data:${id}`));
         if (!data) {
             // session not found in cache, fetch from the database
             data = await this.getUserFromDB(id);
-            await this.storeUserInCache(id, data);
+            this.redis.setex(`data:${id}`, 60 * 60 * 1, JSON.stringify(data));
         }
         return data;
     }
